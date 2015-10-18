@@ -1,0 +1,29 @@
+@import url(https://fonts.googleapis.com/css?family=Alegreya+Sans&subset=latin,latin-ext);
+@import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+@import url(https://fonts.googleapis.com/css?family=PT+Sans&subset=latin,latin-ext);
+
+body { font-family: 'Alegreya Sans', sans-serif; }
+h1, h2, h3 {
+	font-family: 'PT Sans', sans-serif;
+    font-weight: normal;
+}
+.remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+.agenda {
+	font-size: 36px;
+}
+
+q {
+  quotes: "“" "”" "‘" "’";
+}
+q:before {
+    content: open-quote;
+}
+q:after {
+    content: close-quote;
+}
+
+.main-img img {
+	display: block;
+	width: 80%;
+	margin: 5px auto;
+}
