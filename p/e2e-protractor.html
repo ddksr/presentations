@@ -48,12 +48,131 @@ class: center, middle
 ## How do we test real world apps?
 
 - Unit tests
-- Integration tests
-- E2E tests
+- Integration tests - hard
+- E2E tests - huh
 
 And ...
 - User testing
-- Validation
+- Validation (maybe?)
+
+---
+
+# Testing frameworks
+
+TODO.
+https://stackoverflow.com/questions/300855/javascript-unit-test-tools-for-tdd
+
+---
+
+# Protractor
+
+E2E test framework for AngularJS applications build on top of selenium / WebDriverJS.
+
+Features:
+- runs tests against your application running in a real browser
+- supports AngularJS specific interaction
+- automatic waiting
+- debug console
+- screenshots
+- custom browser(s) with custom browser options or PhantomJS
+
+
+
+---
+
+## Supported JS testing frameworks
+
+- Jasmine (default)
+- Mocha
+- Cucumber
+
+## Supported browsers
+- ChromeDriver
+- FirefoxDriver
+- SafariDriver
+- IEDriver
+- Appium - iOS/Safari, Android/Chrome
+- Selendroid
+- PhantomJS / GhostDriver
+
+---
+
+## Angular specific
+
+TODO.
+
+---
+
+## Debugger console
+
+TODO. Demo?
+
+---
+
+## Service mocking
+
+TODO.
+
+---
+
+# Constraints
+
+- no $timeout, use wait or $interval
+
+# Pingdom transaction tests
+
+E2E are great, but ...
+- does our production app really work?
+
+Website monitoring service. Features:
+- Uptime monitoring
+- Real user monitoring
+- Transaction monitoring
+- Incident management
+- API
+
+---
+
+## Transaction tests
+
+Example: 
+
+```
+Go to URL https://www.example.com
+Fill in field #id_username with user@example.com
+Fill in field #id_password with computersaysno
+Submit form #signin_form
+Element div[ng-app="example"] should exist
+Wait for element div.row.body to exist
+Element div.row.body should exist
+Element li.profile should contain user@example.com
+URL should be https://www.example.com/
+```
+
+---
+
+### Pros
+- tests production app 
+- small but quite expressive transaction language
+
+### Limitations
+- max 25 transaction commands (but you can stack transactions =) )
+- limited support for "complex" JS events (keyup, keydown)
+- limited element selection
+- cannot run custom JS code
+
+---
+
+# Our use case
+
+We have an AngularJS frontend for our DSP content management platform.
+For sales purposes we needed a demo that is only valid for one user session.
+Demo's availability is crucial for successful sales pitches.
+
+Testing:
+- backend: unit and integration tests, monitoring
+- app frontend: e2e with Protractor, services with Karma
+- production: Pingdom transaction monitors
 
 
     </textarea>
