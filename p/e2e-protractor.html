@@ -6,7 +6,7 @@
 	<link href="../p.css" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <textarea id="source">
+      <textarea id="source">
 
 class: center, middle
 
@@ -21,9 +21,8 @@ class: center, middle
 .agenda[
 1. E2E testing
 1. Protractor
-1. Constraints
-1. Pingdom
-1. Use case
+1. Complementary tools
+1. Case study =)
 1. DEMO
 ]
 
@@ -55,18 +54,58 @@ And ...
 - User testing
 - Validation (maybe?)
 
+So ... do our E2E really cover everything? **Usually not.**
+
+We fake, we simplify, we divide and conquer. 
+
 ---
 
-# Testing frameworks
+## Testing frameworks
 
-TODO.
-https://stackoverflow.com/questions/300855/javascript-unit-test-tools-for-tdd
+TDD = Test driven development
+BDD = Behavior driven development [Given, When, Then]
+
+Client-side test runners:
+- Jasmin
+- QUnit
+- Mocha.js
+- Cucumber [BDD]
+- ....
+
+---
+
+## Testing frameworks ...
+
+Test runners:
+- Karma
+- Intern
+- Buster.js
+
+E2E testing:
+- Selenium WebDriver
+- Nightswatch.js
+- Protractor
+
+---
+
+## Testing frameworks ...
+
+Distributed testing & continuous integration:
+- TestSwarm, BrowserSwarm
+- Selenium grid
+
+Other:
+- Sinon: spies, stubs & mocks
+- yolpo: visualizing JS execution
 
 ---
 
 # Protractor
 
+angular.github.io/protractor/#/
+
 E2E test framework for AngularJS applications build on top of selenium / WebDriverJS.
+Protractor waits for the $digest cycle to finish, ergo no manual sleeps are needed.
 
 Features:
 - runs tests against your application running in a real browser
@@ -75,8 +114,6 @@ Features:
 - debug console
 - screenshots
 - custom browser(s) with custom browser options or PhantomJS
-
-
 
 ---
 
@@ -97,34 +134,136 @@ Features:
 
 ---
 
+## Example configuration
+
+```javascript
+exports.config = {
+    specs: ['scenario.js'],
+    chromeOnly: true,
+    baseUrl: 'http://localhost:1234', 
+    onPrepare: function () {
+        // handle signin
+        browser.ignoreSynchronization = true;
+        browser.driver.get(localConfig.baseUrl + '/login');
+        browser.driver.findElement(By.id('usr')).sendKeys('p@example.com');
+        browser.driver.findElement(By.id('pass')).sendKeys('testtesttest');
+        browser.driver.findElement(By.id('login)).click();
+        return browser.driver.wait(function() {
+            return browser.driver.getCurrentUrl().then(function(url) {
+                return /application\/url/.test(url);
+            });
+        }, 10000);
+    },
+    framework: 'jasmine',
+    jasmineNodeOpts: {
+        isVerbose: true,
+        showColors: true,
+        includeStackTrace: true,
+        defaultTimeoutInterval: 60000
+    }
+};
+```
+
+---
+
+## Protractor w/ Jasmine
+
+```javascript
+describe('our-module', function() {
+	beforeEach(function() {
+		browser.get('index.html#/player');
+	});
+
+	it('more specific description', function () {
+		element(by.id('action-clear')).click(); // call server
+		expect(element(by.css('.queue-list li')).isPresent()).toBe(false);
+		element(by.id('enqueue-url')).sendKeys("fJ9rUzIMcZQ");
+		element(by.id('action-enqueue')).click(); // call server
+	});
+});
+
+```
+
+```javascript
+...
+element(by.css('.glyphicon-play')).click();
+browser.wait(function () {
+	return element(by.css('.glyphicon-stop')).isPresent();
+}).then(function () {
+	expect(
+		element(by.css('.playing')).getText()
+	).toContain('Bohemian Rhapsody');
+}
+...
+```
+
+---
+
 ## Angular specific
 
-TODO.
+Again, Protractor waits for the $digest cycle to finish.
+`browser.ignoreSynchronization = false;`
+
+
+
+Also some useful angular locators: 
+- `element(by.model('modelname'))`
+- `element(by.binding('bindingname'))`
+- `element.all(by.repeater('result in memory'))`
+
 
 ---
 
 ## Debugger console
 
-TODO. Demo?
+With `browser.pause()`, we enter the debugger console.
+
+Commands:
+- `c` next command
+- `repl` interactive REPL
+
+Also, a debbuger available with `browser.debugger()`
 
 ---
 
-## Service mocking
+## $provide - $delegate
 
-TODO.
+Sometimes we just have to mock a service in our e2e pipeline.
+If we want to do it on the frontend level, we can use $provide.
+
+```javascript
+app.config(['$provide', function ($provide) {
+	$provide.decorator('serviceName', ['$delegate', function ($delegate) {
+
+		$delegate.methodToMock1 = function () {
+			// mock code
+		};	
+
+		$delegate.methodToMock2 = function () {
+			// mock code
+		};	
+
+	}]);
+}]);
+
+```
 
 ---
 
-# Constraints
+# Issues & constraints
 
-- no $timeout, use wait or $interval
+- *sometimes* hard to set up, error reporting usually not really useful
+- timeouts do happen and they are not always straightforward to debug
+- does not support $timeout -> use wait in tests or $interval in your Angular app
+- browser.pause() and debugger repl are still beta
+
+---
 
 # Pingdom transaction tests
 
-E2E are great, but ...
-- does our production app really work?
+E2E are great, but how do we know if our production app really works?
 
-Website monitoring service. Features:
+Pingdom is a website monitoring service. Features:
 - Uptime monitoring
 - Real user monitoring
 - Transaction monitoring
@@ -137,7 +276,7 @@ Website monitoring service. Features:
 
 Example: 
 
-```
+```http
 Go to URL https://www.example.com
 Fill in field #id_username with user@example.com
 Fill in field #id_password with computersaysno
@@ -174,12 +313,30 @@ Testing:
 - app frontend: e2e with Protractor, services with Karma
 - production: Pingdom transaction monitors
 
+---
+
+# Demo
+
+.bigicon[
+<i class="fa fa-play-circle"></i>
+]
+
+---
+
+# Thank you
+
+.bigicon[
+<i class="fa fa-question-circle"></i>
+]
+
 
     </textarea>
     <script src="../remark-latest.min.js">
     </script>
     <script>
-      var slideshow = remark.create();
+		var slideshow = remark.create({
+		slideNumberFormat: '%current% / %total%',
+		});
     </script>
   </body>
 </html>

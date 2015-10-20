@@ -2,14 +2,67 @@
 @import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
 @import url(https://fonts.googleapis.com/css?family=PT+Sans&subset=latin,latin-ext);
 
-body { font-family: 'Alegreya Sans', sans-serif; }
-h1, h2, h3 {
-	font-family: 'PT Sans', sans-serif;
+@import url(https://fonts.googleapis.com/css?family=Montserrat);
+
+@import url("https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css");
+
+body {
+	font-family: 'Montserrat', sans-serif;
     font-weight: normal;
 }
-.remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+h1, h2, h3 {
+	font-family: 'Montserrat', sans-serif;
+    font-weight: normal;
+	color: #F68620;
+}
+
+.remark-code, .remark-inline-code {
+	font-family: 'Ubuntu Mono';
+	background: #fff5ed !important;
+}
+
+.remark-slide-content {
+	font-size: 1.5em;
+}
+
+.remark-slide-content:after {
+	content: "";
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	height: 40px;
+	width: 120px;
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-image: url('r/zem.png');
+}
+
+.remark-slide-content:before {
+	content: "";
+	background-color: #F68620;
+	position: absolute;
+	top: 0;
+	left: 0;
+	height: 1em;
+	width: 100%;
+}
+
+div.remark-slide-number {
+	left: 1em;
+	bottom: 0.5em;
+	font-size: 0.8em;
+}
+
 .agenda {
 	font-size: 36px;
+}
+
+.bigicon {
+	text-align: center;
+	font-size: 200px;
+	color: #F68620;
+	height: 100%;
+	line-height: 400px;
 }
 
 q {
