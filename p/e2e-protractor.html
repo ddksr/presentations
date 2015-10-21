@@ -36,7 +36,7 @@ class: center, middle
 
 ---
 
-## How do we test real world apps?
+## Testing real world apps?
 
 .main-img[
 ![](../r/e2e-protractor/e2e-real-world-schema.svg)
@@ -44,7 +44,7 @@ class: center, middle
 
 ---
 
-## How do we test real world apps?
+## Testing real world apps!
 
 - Unit tests
 - Integration tests - hard
@@ -102,15 +102,21 @@ Other:
 
 # Protractor
 
-angular.github.io/protractor/#/
+angular.github.io/protractor
 
-E2E test framework for AngularJS applications build on top of selenium / WebDriverJS.
-Protractor waits for the $digest cycle to finish, ergo no manual sleeps are needed.
+- E2E test framework for AngularJS applications
+- build on top of selenium / WebDriverJS
 
-Features:
+Selenium? Basically browser automation. 
+
+---
+
+## Features
+
 - runs tests against your application running in a real browser
 - supports AngularJS specific interaction
-- automatic waiting
+- automatic waiting ($digest cycle)
+- automatic promise handling
 - debug console
 - screenshots
 - custom browser(s) with custom browser options or PhantomJS
@@ -138,7 +144,7 @@ Features:
 
 ```javascript
 exports.config = {
-    specs: ['scenario.js'],
+    specs: ['scenarios.js'],
     chromeOnly: true,
     baseUrl: 'http://localhost:1234', 
     onPrepare: function () {
@@ -170,15 +176,15 @@ exports.config = {
 
 ```javascript
 describe('our-module', function() {
-	beforeEach(function() {
+	beforeEach(function() { // setUp
 		browser.get('index.html#/player');
 	});
 
-	it('more specific description', function () {
-		element(by.id('action-clear')).click(); // call server
+	it('more specific description', function () { // test_blah
+		element(by.id('action-clear')).click(); // calling server!!
 		expect(element(by.css('.queue-list li')).isPresent()).toBe(false);
 		element(by.id('enqueue-url')).sendKeys("fJ9rUzIMcZQ");
-		element(by.id('action-enqueue')).click(); // call server
+		element(by.id('action-enqueue')).click();
 	});
 });
 
@@ -259,7 +265,7 @@ app.config(['$provide', function ($provide) {
 
 ---
 
-# Pingdom transaction tests
+# Maybe Pingdom?
 
 E2E are great, but how do we know if our production app really works?
 
