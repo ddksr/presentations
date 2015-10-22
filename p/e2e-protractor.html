@@ -14,6 +14,8 @@ class: center, middle
 
 Žiga Stopinšek - ziga.stopinsek@zemanta.com
 
+@ddksr
+
 ---
 
 # Agenda
@@ -33,6 +35,8 @@ class: center, middle
 *Techopedia*: <q cite="https://www.techopedia.com/definition/7035/end-to-end-test">End-to-end testing is a methodology used to test whether the flow of an application is performing as designed from start to finish. The purpose of carrying out end-to-end tests is to identify system dependencies and to ensure that the right information is passed between various system components and systems.</q>
 
 **We want to test how our system responds to user actions.**
+
+**Why?** We want to ensure that our continous development doesn't break 
 
 ---
 
@@ -63,10 +67,11 @@ We fake, we simplify, we divide and conquer.
 ## Testing frameworks
 
 TDD = Test driven development
+
 BDD = Behavior driven development [Given, When, Then]
 
 Client-side test runners:
-- Jasmin
+- Jasmine
 - QUnit
 - Mocha.js
 - Cucumber [BDD]
@@ -100,12 +105,12 @@ Other:
 
 ---
 
-# Protractor
+![](../r/e2e-protractor/protractor-logo.png)
 
 angular.github.io/protractor
 
 - E2E test framework for AngularJS applications
-- build on top of selenium / WebDriverJS
+- built on top of selenium / WebDriverJS
 
 Selenium? Basically browser automation. 
 
@@ -123,10 +128,10 @@ Selenium? Basically browser automation.
 
 ---
 
-## Supported JS testing frameworks
+## Supported frameworks
 
 - Jasmine (default)
-- Mocha
+- Mocha.js
 - Cucumber
 
 ## Supported browsers
@@ -146,26 +151,26 @@ Selenium? Basically browser automation.
 exports.config = {
     specs: ['scenarios.js'],
     chromeOnly: true,
-    baseUrl: 'http://localhost:1234', 
-    onPrepare: function () {
-        // handle signin
-        browser.ignoreSynchronization = true;
-        browser.driver.get(localConfig.baseUrl + '/login');
-        browser.driver.findElement(By.id('usr')).sendKeys('p@example.com');
-        browser.driver.findElement(By.id('pass')).sendKeys('testtesttest');
-        browser.driver.findElement(By.id('login)).click();
-        return browser.driver.wait(function() {
-            return browser.driver.getCurrentUrl().then(function(url) {
-                return /application\/url/.test(url);
-            });
-        }, 10000);
-    },
+    baseUrl: 'http://localhost:1234',
     framework: 'jasmine',
     jasmineNodeOpts: {
         isVerbose: true,
         showColors: true,
         includeStackTrace: true,
         defaultTimeoutInterval: 60000
+    }, 
+    onPrepare: function () {
+        // handle signin
+        browser.ignoreSynchronization = true;
+        browser.driver.get(localConfig.baseUrl + '/login');
+        browser.driver.findElement(By.id('usr')).sendKeys('p@example.com');
+        browser.driver.findElement(By.id('pass')).sendKeys('testtesttest');
+        browser.driver.findElement(By.id('login')).click();
+        return browser.driver.wait(function() {
+            return browser.driver.getCurrentUrl().then(function(url) {
+                return /application\/url/.test(url);
+            });
+        }, 10000);
     }
 };
 ```
@@ -177,14 +182,15 @@ exports.config = {
 ```javascript
 describe('our-module', function() {
 	beforeEach(function() { // setUp
-		browser.get('index.html#/player');
+		browser.get('index.html#/view');
 	});
 
-	it('more specific description', function () { // test_blah
-		element(by.id('action-clear')).click(); // calling server!!
-		expect(element(by.css('.queue-list li')).isPresent()).toBe(false);
-		element(by.id('enqueue-url')).sendKeys("fJ9rUzIMcZQ");
-		element(by.id('action-enqueue')).click();
+	it('should have a state after entering input', function () { // test_blah
+		element(by.id('clear')).click(); // calling server!!
+		expect(element(by.css('.state')).isPresent()).toBe(false);
+		element(by.id('user-input')).sendKeys("123");
+		element(by.id('action')).click();
+		expect(element(by.css('.state')).isPresent()).toBe(true);
 	});
 });
 
@@ -228,7 +234,30 @@ Commands:
 - `c` next command
 - `repl` interactive REPL
 
-Also, a debbuger available with `browser.debugger()`
+Also, a `node debugger` is available with `browser.debugger()`.
+
+---
+
+# Issues & constraints
+
+- *sometimes* hard to set up, error reporting usually not really useful
+- timeouts do happen and they are not always straightforward to debug
+- does not support $timeout
+	- use sleeps in tests or $interval in your Angular app
+- browser.pause() and debugger repl are still beta
+
+---
+
+# Agenda
+
+.agenda[
+1. ~~E2E testing~~
+1. ~~Protractor~~
+1. Complementary tools
+1. Case study =)
+1. DEMO
+]
+
 
 ---
 
@@ -256,15 +285,6 @@ app.config(['$provide', function ($provide) {
 
 ---
 
-# Issues & constraints
-
-- *sometimes* hard to set up, error reporting usually not really useful
-- timeouts do happen and they are not always straightforward to debug
-- does not support $timeout -> use wait in tests or $interval in your Angular app
-- browser.pause() and debugger repl are still beta
-
----
-
 # Maybe Pingdom?
 
 E2E are great, but how do we know if our production app really works?
@@ -280,6 +300,8 @@ Pingdom is a website monitoring service. Features:
 
 ## Transaction tests
 
+Runs a transaction on the specified URL, get feedback on fails.
+
 Example: 
 
 ```http
@@ -287,11 +309,11 @@ Go to URL https://www.example.com
 Fill in field #id_username with user@example.com
 Fill in field #id_password with computersaysno
 Submit form #signin_form
-Element div[ng-app="example"] should exist
-Wait for element div.row.body to exist
-Element div.row.body should exist
-Element li.profile should contain user@example.com
-URL should be https://www.example.com/
+Element div[ng-app="example-com"] should exist
+Wait for element div.main.container to exist
+Element div.main.data should exist
+Element .profile should contain user@example.com
+URL should be https://www.example.com/app/
 ```
 
 ---
@@ -299,6 +321,7 @@ URL should be https://www.example.com/
 ### Pros
 - tests production app 
 - small but quite expressive transaction language
+- selectors autocompletion
 
 ### Limitations
 - max 25 transaction commands (but you can stack transactions =) )
@@ -316,8 +339,10 @@ Demo's availability is crucial for successful sales pitches.
 
 Testing:
 - backend: unit and integration tests, monitoring
-- app frontend: e2e with Protractor, services with Karma
+- app frontend: e2e with Protractor, unit tests of services with Karma
 - production: Pingdom transaction monitors
+
+Continious integration: CircleCI
 
 ---
 
